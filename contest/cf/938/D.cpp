@@ -51,29 +51,29 @@ int solve(int n, int m, int k, vector<ll> a, vector<ll> b) {
     }
 
     int cnt = 0;
-    int sum = 0;
+    int matched = 0;
     int l = 0;
     unordered_map<ll, int> ma;
     for (int i = 0; i < m; i++) {
-        sum -= min(ma[a[i]], mb[a[i]]);
+        matched -= min(ma[a[i]], mb[a[i]]);
         ma[a[i]] += 1;
-        sum += min(ma[a[i]], mb[a[i]]);
+        matched += min(ma[a[i]], mb[a[i]]);
     }
 
-    cnt += sum >= k;
+    cnt += matched >= k;
     for (int i = m; i < n; i++) {
         while (i - l + 1 > m) {
-            sum -= min(ma[a[l]], mb[a[l]]);
+            matched -= min(ma[a[l]], mb[a[l]]);
             ma[a[l]] -= 1;
-            sum += min(ma[a[l]], mb[a[l]]);
+            matched += min(ma[a[l]], mb[a[l]]);
             l++;
         }
 
-        sum -= min(ma[a[i]], mb[a[i]]);
+        matched -= min(ma[a[i]], mb[a[i]]);
         ma[a[i]] += 1;
-        sum += min(ma[a[i]], mb[a[i]]);
+        matched += min(ma[a[i]], mb[a[i]]);
 
-        cnt += sum >= k;
+        cnt += matched >= k;
     }
 
     return cnt;
