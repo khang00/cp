@@ -1,17 +1,8 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
 #define ll long long
 #define ld long double
-#define fastio() ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
-
-void IN_OUT() {
-#ifndef ONLINE_JUDGE
-    freopen("in.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-#endif
-}
 
 double log_a_to_base_b(double a, double b) {
     return std::log(a) / std::log(b);
@@ -48,9 +39,23 @@ ll big_pow(ll a, ll b, ll m) {
     return res;
 }
 
+int solve(int x1, int y1, int x2, int y2, int n, string s) {
+
+}
+
 int main() {
-    fastio();
-    IN_OUT();
+    int x1, y1;
+    int x2, y2;
+    cin >> x1 >> y1;
+    cin >> x2 >> y2;
+
+    int n;
+    cin >> n;
+
+    string s;
+    cin >> s;
+
+    cout << solve(x1, y1, x2, y2, n, s);
 
     return 0;
 }
