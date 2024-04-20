@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include <concepts>
 
 using namespace std;
 template<typename A, typename B>
@@ -12,56 +11,59 @@ concept Container = requires(A a)
     { std::regular<B> };
 };
 
-struct pair_hash {
-    template <class T1, class T2>
-    std::size_t operator () (const std::pair<T1,T2> &p) const {
-        auto h1 = std::hash<T1>{}(p.first);
-        auto h2 = std::hash<T2>{}(p.second);
-
-        // Mainly for demonstration purposes, i.e. works but is overly simple
-        // In the real world, use sth. like boost.hash_combine
-        return h1 ^ h2;
-    }
+template<typename T>
+concept Hashable = requires(T a)
+{
+    { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
+    { std::regular<T> };
 };
 
-template<std::regular T, Container<T> F>
+template<Hashable T, Container<T> F>
 class DSU {
 private:
     F anc;
+    unordered_map<T, int> size;
 public:
     DSU() {
         anc = F();
+        size = unordered_map<T, int>();
     }
 
     void make_set(T a) {
         anc[a] = a;
+        size[a] = 0;
     }
 
     T find_set(T a) {
-        while (anc[a] != a)
-            a = anc[a];
-        return a;
+        if (a == anc[a])
+            return a;
+
+        return anc[a] = find_set(anc[a]);
     }
 
     void merge(T a, T b) {
         T sa = find_set(a);
         T sb = find_set(b);
-        if (sa != sb)
-            anc[sa] = sb;
+        if (a != b) {
+            if (size[a] < size[b])
+                swap(a, b);
+            anc[b] = a;
+            size[a] += size[b];
+        }
     }
 };
 
 int main() {
-    auto a = DSU<pair<int, int>, unordered_map<pair<int, int>, pair<int, int>, pair_hash>>();
-    a.make_set(pair(1, 2));
-    a.make_set(pair(2, 1));
+    auto a = DSU<int, unordered_map<int, int>>();
+    a.make_set(1);
+    a.make_set(2);
 
-    cout << a.find_set(pair(1, 2)).first << endl;
-    cout << a.find_set(pair(2, 1)).first << endl;
+    cout << a.find_set(1) << endl;
+    cout << a.find_set(2) << endl;
 
-    a.merge(pair(1, 2), pair(2, 1));
-    cout << a.find_set(pair(1, 2)).first << endl;
-    cout << a.find_set(pair(2, 1)).first << endl;
+    a.merge(1, 2);
+    cout << a.find_set(1) << endl;
+    cout << a.find_set(2) << endl;
 
     return 0;
 }
