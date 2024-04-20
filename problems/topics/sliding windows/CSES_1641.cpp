@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
-#include<ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
 using namespace __gnu_pbds;
@@ -66,9 +66,49 @@ ll big_pow(ll a, ll b, ll m) {
     return res;
 }
 
+vector<int> solve(int n, ll x, vector<ll> a) {
+    vector<pair<ll, int>> arr(n, pair(0, 0));
+    for (int i = 0; i < n; i++) {
+        arr[i] = pair(a[i], i);
+    }
+    sort(arr.begin(), arr.end());
+
+    for (int i = 0; i < n; i++) {
+        ll t = x - arr[i].first;
+
+        int l = i + 1, r = n;
+        while (r - l > 1) {
+            ll k = arr[l].first + arr[r - 1].first;
+            if (k == t)
+                return vector<int>{arr[i].second + 1, arr[l].second + 1, arr[r - 1].second + 1};
+            else if (k > t)
+                r -= 1;
+            else
+                l += 1;
+        }
+    }
+
+    return vector<int>(0, 0);
+}
+
 int main() {
     fastio();
     IN_OUT();
+    int n;
+    ll x;
+    cin >> n >> x;
+
+    vector<ll> a(n, 0);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+
+    auto ans = solve(n, x, a);
+    if (ans.empty())
+        cout << "IMPOSSIBLE";
+    else
+        for (auto c: ans)
+            cout << c << ' ';
 
     return 0;
 }
