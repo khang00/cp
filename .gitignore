@@ -31,3 +31,6 @@ relative/path/to/dir/filename.extension
 relative/path/to/dir/anotherfile
 .idea
 *.dSYM
+
+in.txt
+out.txt
