@@ -1,13 +1,16 @@
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
-#include<ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
 using namespace __gnu_pbds;
 
 #define ll long long
 #define ld long double
-#define fastio() ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
+#define fastio()                                                               \
+  ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
+  cout.tie(NULL)
 
 void IN_OUT() {
 #ifndef ONLINE_JUDGE
@@ -26,41 +29,51 @@ struct CHash {
     }
 
     size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        static const uint64_t FIXED_RANDOM =
+                chrono::steady_clock::now().time_since_epoch().count();
         return splitmix64(x + FIXED_RANDOM);
     }
 };
 
-double log_a_to_base_b(double a, double b) {
-    return std::log(a) / std::log(b);
-}
+double log_a_b(double a, double b) { return std::log(a) / std::log(b); }
 
-ll comb(ll n, ll k) {
-    ld res = 1;
-    for (int i = 1; i <= k; ++i)
+long long comb(long long n, long long k) {
+    long double res = 1;
+    for (long long i = 1; i <= k; ++i)
         res = res * (n - k + i) / i;
 
-    return (ll) (res + 0.01);
+    return (long long) (res + 0.01);
 }
 
-vector<ll> pow_2_arr(ll exp) {
-    vector<ll> _2_pow(exp + 1, 1);
-    _2_pow[0] = 1;
+vector<long long> pow_bin_arr(long long exp) {
+    vector<long long> pows(exp + 1, 1);
+    pows[0] = 1;
 
     for (int i = 1; i <= exp; i++) {
-        _2_pow[i] = _2_pow[i - 1] * 2;
+        pows[i] = pows[i - 1] * 2;
     }
 
-    return _2_pow;
+    return pows;
 }
 
-ll big_pow(ll a, ll b, ll m) {
+long long big_pow_m(long long a, long long b, long long m) {
     a %= m;
-    ll res = 1;
+    long long res = 1;
     while (b > 0) {
         if (b & 1)
             res = res * a % m;
         a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
+
+long long bin_pow(long long a, long long b) {
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a;
+        a = a * a;
         b >>= 1;
     }
     return res;
