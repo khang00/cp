@@ -31,7 +31,7 @@ public:
 
     void make_set(T a) {
         anc[a] = a;
-        size[a] = 0;
+        size[a] = 1;
     }
 
     T find_set(T a) {
@@ -44,11 +44,11 @@ public:
     void merge(T a, T b) {
         T sa = find_set(a);
         T sb = find_set(b);
-        if (a != b) {
-            if (size[a] < size[b])
-                swap(a, b);
-            anc[b] = a;
-            size[a] += size[b];
+        if (sa != sb) {
+            if (size[sa] < size[sb])
+                swap(sa, sb);
+            anc[sa] = sb;
+            size[sa] += size[sb];
         }
     }
 };
