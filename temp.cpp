@@ -5,6 +5,7 @@
 using namespace std;
 using namespace __gnu_pbds;
 
+#define INF 1e18
 #define ll long long
 #define ld long double
 #define fastio()                                                               \

@@ -19,69 +19,63 @@ void IN_OUT() {
 #endif
 }
 
-struct CHash {
-    static uint64_t splitmix64(uint64_t x) {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
+bool check(int n, int k, const vector<ll> &a, const vector<ll> &p, ll x) {
+    ll min_ = a[0] - x;
+    ll d = x;
+    for (int i = n - 1; i >= 0; i--) {
+        d += a[i] - min_;
+        ll sum_ = p[n - 1] - d;
+        if (sum_ <= k)
+            return true;
     }
 
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM =
-                chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
-
-double log_a_b(double a, double b) { return std::log(a) / std::log(b); }
-
-long long comb(long long n, long long k) {
-    long double res = 1;
-    for (long long i = 1; i <= k; ++i)
-        res = res * (n - k + i) / i;
-
-    return (long long) (res + 0.01);
+    return false;
 }
 
-vector<long long> pow_bin_arr(long long exp) {
-    vector<long long> pows(exp + 1, 1);
-    pows[0] = 1;
+ll solve(int n, ll k, vector<ll> a) {
+    sort(a.begin(), a.end());
 
-    for (int i = 1; i <= exp; i++) {
-        pows[i] = pows[i - 1] * 2;
+    vector<ll> p(n, 0);
+    p[0] = a[0];
+    for (int i = 1; i < n; i++)
+        p[i] = p[i - 1] + a[i];
+
+    ll min_step = 1e12;
+    for (int y = n; y > 0; y--) {
+        ll l = -1, r = 1e12;
+        while (r - l > 1) {
+            ll x = midpoint(l, r);
+            ll sum_ = (p[y - 1] - p[0] + a[0]) + (a[0] - x) * (n - y) - x;
+            if (sum_ > k)
+                l = x;
+            else
+                r = x;
+        }
+
+        min_step = min(min_step, r + (n - y));
     }
 
-    return pows;
-}
-
-long long big_pow_m(long long a, long long b, long long m) {
-    a %= m;
-    long long res = 1;
-    while (b > 0) {
-        if (b & 1)
-            res = res * a % m;
-        a = a * a % m;
-        b >>= 1;
-    }
-    return res;
-}
-
-long long bin_pow(long long a, long long b) {
-    long long res = 1;
-    while (b > 0) {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
-    }
-    return res;
+    return min_step;
 }
 
 int main() {
     fastio();
     IN_OUT();
+
+    int t;
+    cin >> t;
+
+    for (int i = 0; i < t; i++) {
+        int n;
+        ll k;
+        cin >> n >> k;
+
+        vector<ll> a(n, 0);
+        for (int j = 0; j < n; j++)
+            cin >> a[j];
+
+        cout << solve(n, k, a) << endl;
+    }
 
     return 0;
 }
