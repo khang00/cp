@@ -5,7 +5,7 @@ from typing import List
 
 
 class Solution:
-    def findCheapestPrice_dp(self, n: int, f: List[List[int]], s: int, e: int, k: int) -> int:
+    def findCheapestPrice_dp_bfs(self, n: int, f: List[List[int]], s: int, e: int, k: int) -> int:
         inf = 10 ** 9
         g = {}
         p = {}
@@ -46,7 +46,7 @@ class Solution:
 
         return dp[e][k] if dp[e][k] != inf else -1
 
-    def findCheapestPrice(self, n: int, f: List[List[int]], src: int, dst: int, k: int) -> int:
+    def findCheapestPrice_dijsktra(self, n: int, f: List[List[int]], src: int, dst: int, k: int) -> int:
         g = {}
         for i in range(n):
             g[i] = []
