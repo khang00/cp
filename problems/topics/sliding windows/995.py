@@ -8,7 +8,6 @@ class Solution:
 
         is_f = [False] * n
         all_f, curr_f = 0, 0
-        i = 0
         for i in range(0, n):
             if i >= k and is_f[i - k]:
                 curr_f -= 1
