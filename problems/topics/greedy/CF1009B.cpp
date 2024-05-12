@@ -21,30 +21,44 @@ void IN_OUT() {
 #endif
 }
 
-ll solve(int n, vector<ll> a) {
-    ll neg = 0, pos = 0;
-    for (int i = 0; i < n; i++) {
-        if (a[i] < 0)
-            neg += a[i];
-        else
-            pos += a[i];
+string solve(string s) {
+    int n = s.size();
+
+    ll cnt = 0;
+    for (int i = 0; i < n; i++)
+        if (s[i] == '1')
+            cnt++;
+
+    string ans;
+    int i = 0;
+    while (i < n && s[i] != '2') {
+        if (s[i] == '0')
+            ans += s[i];
+        i++;
     }
 
-    return pos - neg;
+    while (cnt > 0) {
+        ans += '1';
+        cnt--;
+    }
+
+    while (i < n) {
+        if (s[i] != '1')
+            ans += s[i];
+        i++;
+    }
+
+    return ans;
 }
 
 int main() {
     fastio();
     IN_OUT();
 
-    int n;
-    cin >> n;
+    string s;
+    cin >> s;
 
-    vector<ll> a(n, 0);
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
-
-    cout << solve(n, a);
+    cout << solve(s);
 
     return 0;
 }

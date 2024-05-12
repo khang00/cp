@@ -21,16 +21,26 @@ void IN_OUT() {
 #endif
 }
 
-ll solve(int n, vector<ll> a) {
-    ll neg = 0, pos = 0;
-    for (int i = 0; i < n; i++) {
-        if (a[i] < 0)
-            neg += a[i];
-        else
-            pos += a[i];
+pair<string, string> solve(int n, vector<ll> a, vector<ll> b) {
+    string c(n, '0'), d(n, '0');
+    int k = n / 2;
+    for (int i = 0; i < k; i++) {
+        c[i] = '1';
+        d[i] = '1';
     }
 
-    return pos - neg;
+    int l = 0, r = 0;
+    for (int i = 0; i < n; i++) {
+        if (a[l] < b[r]) {
+            c[l] = '1';
+            l += 1;
+        } else {
+            d[r] = '1';
+            r += 1;
+        }
+    }
+
+    return {c, d};
 }
 
 int main() {
@@ -41,10 +51,12 @@ int main() {
     cin >> n;
 
     vector<ll> a(n, 0);
+    vector<ll> b(n, 0);
     for (int i = 0; i < n; i++)
-        cin >> a[i];
+        cin >> a[i] >> b[i];
 
-    cout << solve(n, a);
+    auto ans = solve(n, a, b);
+    cout << ans.first << endl << ans.second;
 
     return 0;
 }
