@@ -21,48 +21,35 @@ void IN_OUT() {
 #endif
 }
 
-string solve(string s, int k) {
-    auto n = s.size();
+ll solve(int n, vector<ll> a) {
+    ll m = 1e8;
+    vector<ll> p(n, a[0]);
+    for (int i = 1; i < n; i++)
+        p[i] = ((p[i - 1] % m) + (a[i] % m)) % m;
 
-    int l = 0, r = 1;
-    while (k > 0) {
-        if (s[l] > s[r]) {
-            s[l] = '*';
-            k--;
-            l = r;
-            r++;
-        } else {
-            s[r] = '*';
-            k--;
-            r++;
-        }
+    ll sum = 0;
+    for (int i = 0; i < n - 1; i++) {
+        ll sum_j = p[n - 1] - p[i];
+        ll curr_term = (a[i] * (n - i - 1)) % m + sum_j;
+        sum += curr_term;
     }
 
-    string ans;
-    for (int i = 0; i < n; i++) {
-        if (s[i] != '*')
-            ans.push_back(s[i]);
-    }
-
-    return s;
+    return sum + m;
 }
 
 int main() {
     fastio();
     IN_OUT();
 
-    int t;
-    cin >> t;
+    int n;
+    cin >> n;
 
-    for (int i = 0; i < t; i++) {
-        string x;
-        cin >> x;
+    vector<ll> a(n, 0);
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
 
-        int k;
-        cin >> k;
+    cout << solve(n, a);
 
-        cout << solve(x, k) << '\n';
-    }
 
     return 0;
 }

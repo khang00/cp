@@ -21,27 +21,34 @@ void IN_OUT() {
 #endif
 }
 
-string solve(string s, int k) {
-    auto n = s.size();
+string solve(int n, ll k, string s) {
+    char r = 'a';
+    char l = 'a';
+    char max_ = 'a';
+    for (int i = 0; i < n; i++) {
+        if (s[i] <= max_) {
+            s[i] = 'a';
+            continue;
+        }
 
-    int l = 0, r = 1;
-    while (k > 0) {
-        if (s[l] > s[r]) {
-            s[l] = '*';
-            k--;
-            l = r;
-            r++;
-        } else {
-            s[r] = '*';
-            k--;
-            r++;
+        if (k > 0) {
+            auto diff = s[i] - max_;
+            if (diff <= k) {
+                max_ = max(max_, s[i]);
+                s[i] = 'a';
+                k -= diff;
+            } else {
+                r = s[i];
+                s[i] -= k;
+                l = s[i];
+                k = 0;
+            }
         }
     }
 
-    string ans;
     for (int i = 0; i < n; i++) {
-        if (s[i] != '*')
-            ans.push_back(s[i]);
+        if (l <= s[i] && s[i] <= r)
+            s[i] = l;
     }
 
     return s;
@@ -55,14 +62,16 @@ int main() {
     cin >> t;
 
     for (int i = 0; i < t; i++) {
-        string x;
-        cin >> x;
+        int n;
+        ll k;
+        cin >> n >> k;
 
-        int k;
-        cin >> k;
+        string s;
+        cin >> s;
 
-        cout << solve(x, k) << '\n';
+        cout << solve(n, k, s) << '\n';
     }
+
 
     return 0;
 }

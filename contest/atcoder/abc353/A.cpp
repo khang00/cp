@@ -21,48 +21,28 @@ void IN_OUT() {
 #endif
 }
 
-string solve(string s, int k) {
-    auto n = s.size();
-
-    int l = 0, r = 1;
-    while (k > 0) {
-        if (s[l] > s[r]) {
-            s[l] = '*';
-            k--;
-            l = r;
-            r++;
-        } else {
-            s[r] = '*';
-            k--;
-            r++;
-        }
-    }
-
-    string ans;
+int solve(int n, vector<ll> h) {
     for (int i = 0; i < n; i++) {
-        if (s[i] != '*')
-            ans.push_back(s[i]);
+        if (h[i] > h[0])
+            return i + 1;
     }
 
-    return s;
+    return -1;
 }
 
 int main() {
     fastio();
     IN_OUT();
 
-    int t;
-    cin >> t;
+    int n;
+    cin >> n;
 
-    for (int i = 0; i < t; i++) {
-        string x;
-        cin >> x;
+    vector<ll> h(n, 0);
+    for (int i = 0; i < n; i++)
+        cin >> h[i];
 
-        int k;
-        cin >> k;
+    cout << solve(n, h);
 
-        cout << solve(x, k) << '\n';
-    }
 
     return 0;
 }
