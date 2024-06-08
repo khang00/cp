@@ -22,44 +22,36 @@ void IN_OUT() {
 #endif
 }
 
-ll solve(string s, ll m, const vector<ll> &dp) {
-    int n = s.size();
+ll solve(int n) {
     ll mod = 1e9 + 7;
-    ll sum = 0;
 
-    for (int i = 0; i < n; i++) {
-        int num = s[i] - '0';
-        if (m - (10 - num) >= 0)
-            sum += dp[m - (10 - num)] % mod;
-        else
-            sum += 1 % mod;
+    vector<ll> curr(4, 0);
+    vector<ll> pre(4, 0);
+    for (int j = 0; j < 4; j++)
+        pre[j] = 1;
+    pre[3] = 0;
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < 4; j++) {
+            curr[j] = 0;
+            for (int o = 0; o < 4; o++) {
+                if (o != j)
+                    curr[j] += pre[o] % mod;
+            }
+        }
+        pre = curr;
     }
 
-    return sum % mod;
+    return curr[3] % mod;
 }
 
 int main() {
     fastio();
     IN_OUT();
 
-    ll mod = 1e9 + 7;
-    vector<ll> dp(2 * 1e5 + 1, 0);
-    dp[9] = 3;
-    for (int i = 0; i <= 8; i++)
-        dp[i] = 2;
+    int n;
+    cin >> n;
 
-    for (int i = 10; i < dp.size(); i++)
-        dp[i] = (dp[i - 9] % mod + dp[i - 10] % mod) % mod;
-
-    int t;
-    cin >> t;
-
-    for (int i = 0; i < t; i++) {
-        string s;
-        ll m;
-        cin >> s >> m;
-
-        cout << solve(s, m, dp) << '\n';
-    }
+    cout << solve(n) << '\n';
     return 0;
 }
