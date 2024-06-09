@@ -12,26 +12,7 @@ class Solution:
             g[s].append((w, e, i))
             g[e].append((w, s, i))
 
-        d = [1e9 + 7] * n
-
-        def dij(s):
-            d[s[1]] = 0
-            queue = [s]
-            while queue:
-                w, v = heapq.heappop(queue)
-                if v == 0:
-                    return
-
-                for edge in g[v]:
-                    (wi, i, _) = edge
-                    if w + wi < d[i]:
-                        d[i] = w + wi
-                        heapq.heappush(queue, (d[i], i))
-
-            return
-
-        dij((0, n - 1))
-
+        d = self.dij(n, (0, n - 1), g)
         min_d = d[0]
         min_edge = set()
         ans = [False] * len(edges)
@@ -47,6 +28,20 @@ class Solution:
         dfs(0, 0)
 
         return ans
+
+    def dij(self, n, s, g):
+        d = [int(1e9 + 7)] * n
+        d[s[1]] = 0
+        queue = [s]
+        while queue:
+            w, v = heapq.heappop(queue)
+            for edge in g[v]:
+                (wi, i, _) = edge
+                if w + wi < d[i]:
+                    d[i] = w + wi
+                    heapq.heappush(queue, (d[i], i))
+
+        return d
 
 
 if __name__ == '__main__':

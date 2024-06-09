@@ -26,27 +26,21 @@ ll solve(int n, vector<ll> a, vector<ll> b) {
     ll mod = 998244353;
     int m = 3000;
     vector<vector<ll>> dp(n, vector<ll>(m + 1, 0));
-
-    for (ll j = a[0]; j <= m; j++)
-        if (j == a[0])
-            dp[0][j] = 1;
-        else if (j <= b[0])
-            dp[0][j] = dp[0][j - 1] + 1;
-        else
-            dp[0][j] = dp[0][j - 1];
+    for (int i = a[0]; i <= b[0]; i++)
+        dp[0][i] = 1;
 
     for (int i = 1; i < n; i++) {
-        for (ll j = a[i]; j <= m; j++) {
-            if (j == 0)
-                dp[i][j] = 1;
-            else if (j <= b[i])
-                dp[i][j] = ((ll) dp[i - 1][j] % mod + (ll) dp[i][j - 1] % mod) % mod;
-            else
-                dp[i][j] = dp[i][j - 1];
+        for (int j = a[i]; j <= b[i]; j++) {
+            for (int o = a[i - 1]; o <= j; o++)
+                dp[i][j] += dp[i - 1][o] % mod;
         }
     }
 
-    return dp[n - 1][b[n - 1]];
+    ll cnt = 0;
+    for (int j = a[n - 1]; j <= b[n - 1]; j++)
+        cnt += dp[n - 1][j] % mod;
+
+    return cnt % mod;
 }
 
 int main() {
@@ -64,6 +58,6 @@ int main() {
         cin >> b[i];
 
 
-    cout << solve(n, a, b);
+    cout << solve(n, a, b) << '\n';
     return 0;
 }
