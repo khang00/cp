@@ -22,48 +22,45 @@ void IN_OUT() {
 #endif
 }
 
-ll solve(int n, vector<ll> a, vector<ll> b) {
-    ll mod = 998244353;
-    int m = 3000;
-    vector<vector<ll>> dp(n, vector<ll>(m + 1, 0));
+ll solve(int n, int k, vector<ll> a) {
+    ll mod = (ll) 1e9 + 7;
+    vector<vector<ll>> dp(n, vector<ll>(k + 1, 0));
 
-    for (ll j = a[0]; j <= m; j++)
-        if (j == a[0])
-            dp[0][j] = 1;
-        else if (j <= b[0])
-            dp[0][j] = dp[0][j - 1] + 1;
-        else
-            dp[0][j] = dp[0][j - 1];
+    for (ll j = 0; j <= a[0]; j++)
+        dp[0][j] = 1;
+    for (ll i = 0; i < n; i++)
+        dp[i][0] = 1;
 
     for (int i = 1; i < n; i++) {
-        for (ll j = a[i]; j <= m; j++) {
-            if (j == 0)
-                dp[i][j] = 1;
-            else if (j <= b[i])
-                dp[i][j] = ((ll) dp[i - 1][j] % mod + (ll) dp[i][j - 1] % mod) % mod;
-            else
-                dp[i][j] = dp[i][j - 1];
+        for (ll j = 1; j <= a[i]; j++) {
+            for (ll o = 0; o <= j; o++)
+                dp[i][j] += dp[i - 1][j - o];
         }
     }
 
-    return dp[n - 1][b[n - 1]];
+#ifndef ONLINE_JUDGE
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j <= k; j++) {
+            cout << dp[i][j] << ' ';
+        }
+        cout << '\n';
+    }
+#endif
+
+    return dp[n - 1][k];
 }
 
 int main() {
     fastio();
     IN_OUT();
 
-    int n;
-    cin >> n;
+    int n, k;
+    cin >> n >> k;
 
     vector<ll> a(n, 0);
-    vector<ll> b(n, 0);
     for (int i = 0; i < n; i++)
         cin >> a[i];
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
 
-
-    cout << solve(n, a, b);
+    cout << solve(n, k, a);
     return 0;
 }
