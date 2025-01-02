@@ -22,25 +22,19 @@ void IN_OUT() {
 #endif
 }
 
-ll solve(int n, vector<ll> a, vector<ll> b) {
-    ll mod = 998244353;
-    int m = 3000;
-    vector<vector<ll>> dp(n, vector<ll>(m + 1, 0));
-    for (int i = a[0]; i <= b[0]; i++)
-        dp[0][i] = 1;
-
+ll solve(int n, vector<ll> &a) {
+    vector<ll> seq;
+    seq.push_back(a[0]);
     for (int i = 1; i < n; i++) {
-        for (int j = a[i]; j <= b[i]; j++) {
-            for (int o = a[i - 1]; o <= j; o++)
-                dp[i][j] += dp[i - 1][o] % mod;
+        auto it = lower_bound(seq.begin(), seq.end(), a[i]) - seq.begin();
+        if (it == seq.size())
+            seq.push_back(a[i]);
+        else {
+            seq[it] = a[i];
         }
     }
 
-    ll cnt = 0;
-    for (int j = a[n - 1]; j <= b[n - 1]; j++)
-        cnt += dp[n - 1][j] % mod;
-
-    return cnt % mod;
+    return seq.size();
 }
 
 int main() {
@@ -51,13 +45,9 @@ int main() {
     cin >> n;
 
     vector<ll> a(n, 0);
-    vector<ll> b(n, 0);
     for (int i = 0; i < n; i++)
         cin >> a[i];
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
 
-
-    cout << solve(n, a, b) << '\n';
+    cout << solve(n, a);
     return 0;
 }

@@ -93,8 +93,10 @@ vector<ll> solve(int n, int k, vector<ll> a) {
                 lset.erase(lset.find(*lset.rbegin()));
             }
         }
-
-        ans.push_back(*lset.rbegin());
+            if (k % 2 == 1)
+            ans.push_back(*lset.rbegin());
+        else
+            ans.push_back((*lset.rbegin() + *hset.begin()) / 2);
     }
 
     return ans;
