@@ -20,6 +20,12 @@ void IN_OUT() {
 #endif
 }
 
+struct PHASH {
+    size_t operator()(const pair<int, int> &x) const {
+        return hash<long long>()(((long long) x.first) ^ (((long long) x.second) << 32));
+    }
+};
+
 struct CHash {
     static uint64_t splitmix64(uint64_t x) {
         // http://xorshift.di.unimi.it/splitmix64.c

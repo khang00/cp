@@ -1,60 +1,50 @@
-import collections
-import heapq
-import math
 from collections import deque, defaultdict, Counter
 from dataclasses import dataclass, field
-from functools import cache
+from functools import cache, lru_cache
 from heapq import heappop, heappush, heapify
 from itertools import count
-from math import log10, floor
-
+from math import log10, floor, sqrt, floor, ceil, lcm
 from typing import List, Deque, Tuple, Dict
 
-class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val
-        self.left = left
-        self.right = right
+class Solution:
+    def minCost(self, grid: List[List[int]]) -> int:
+        n, m = len(grid), len(grid[0])
+        directions = [(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)]
 
-def main():
-    n = int(input())
-    a = [0] * n
+        dis = [[10 ** 9] * m for _ in range(n)]
+        dis[0][0] = 0
 
-    if n > 0:
-        a = [int(it) for it in input().split(" ")]
+        queue = deque()
+        queue.append((0, 0, 0))
+        while queue:
+            (uw, i, j) = queue.popleft()
+            if (i, j) == (n - 1, m - 1):
+                return uw
 
-    a.sort()
-    def helper(left, right):
-        if left > right:
-            return None
+            for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+                x, y = i + dx, j + dy
+                if not (0 <= x < n and 0 <= y < m):
+                    continue
 
-        # always choose left middle node as a root
-        p = (left + right) // 2
+                vw = uw
+                if directions[grid[i][j]] != (dx, dy):
+                    vw += 1
 
-        # preorder traversal: node -> left -> right
-        curr_root = TreeNode(a[p])
-        curr_root.left = helper(left, p - 1)
-        curr_root.right = helper(p + 1, right)
-        return curr_root
+                if dis[x][y] > vw:
+                    dis[x][y] = vw
+                    if vw == uw:
+                        queue.appendleft((vw, x, y))
+                    else:
+                        queue.append((vw, x, y))
 
-    root = helper(0, n - 1)
-    sum_all_leaf = 0
-    def sum_leaf(curr):
-        nonlocal sum_all_leaf
-        if curr is None:
-            return
+        return dis[n - 1][m - 1]
 
-        if curr.left is None and curr.right is None:
-            sum_all_leaf += curr.val
-            return
-
-        sum_leaf(curr.left)
-        sum_leaf(curr.right)
-        return
-
-    sum_leaf(root)
-    print(sum_all_leaf)
-    return
 
 if __name__ == '__main__':
-    main()
+    sol = Solution()
+
+    print(sol.minCost(
+        [[3, 4, 3], [2, 2, 2], [2, 1, 1], [4, 3, 2], [2, 1, 4], [2, 4, 1], [3, 3, 3], [1, 4, 2], [2, 2, 1], [2, 1, 1],
+         [3, 3, 1], [4, 1, 4], [2, 1, 4], [3, 2, 2], [3, 3, 1], [4, 4, 1], [1, 2, 2], [1, 1, 1], [1, 3, 4], [1, 2, 1],
+         [2, 2, 4], [2, 1, 3], [1, 2, 1], [4, 3, 2], [3, 3, 4], [2, 2, 1], [3, 4, 3], [4, 2, 3], [4, 4, 4]],
+    ))
