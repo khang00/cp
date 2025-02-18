@@ -86,6 +86,51 @@ long long bin_pow(long long a, long long b) {
     return res;
 }
 
+vector<pair<ll, ll>> find_bridges(ll n, vector<vector<ll>> &adj) {
+    if (n == 0)
+        return {};
+
+    vector<ll> parents(n, -1);
+    vector<vector<bool>> spanEdges(n, vector<bool>(n));
+    vector<ll> dp(n, 0);
+    vector<bool> vis(n);
+
+    function<void(ll, ll)> dfs = [&](ll u, ll p) {
+        parents[u] = p;
+
+        vis[u] = true;
+        for (auto v: adj[u])
+            if (vis[v] && not spanEdges[u][v])
+                dp[u] += 2;
+
+        for (auto v: adj[u]) {
+            if (vis[v])
+                continue;
+
+            spanEdges[u][v] = true;
+            spanEdges[v][u] = true;
+            dfs(v, u);
+            dp[u] += dp[v];
+        }
+
+        for (auto v: adj[u])
+            if (not spanEdges[u][v])
+                dp[u] -= 1;
+    };
+
+    for (int i = 0; i < n; i++)
+        if (not vis[i])
+            dfs(i, -1);
+
+    vector<pair<ll, ll>> bridges;
+    for (ll i = 0; i < n; i++) {
+        if (parents[i] != -1 && dp[i] == 0)
+            bridges.emplace_back(min(i, parents[i]), max(i, parents[i]));
+    }
+    std::sort(bridges.begin(), bridges.end());
+    return bridges;
+}
+
 int main() {
     fastio();
     IN_OUT();
