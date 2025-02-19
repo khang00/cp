@@ -1,17 +1,19 @@
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
 using namespace __gnu_pbds;
 
-#define INF 1e18
+#define INF (ll) 1e18
+#define MAX (int) 1e5 + 1
 #define ll long long
+#define ul unsigned long
 #define ld long double
 #define fastio()                                                               \
   ios_base::sync_with_stdio(false);                                            \
   cin.tie(NULL);                                                               \
-  cout.tie(NULL)
+  cout.tie(NULL);                                                              \
+  cout << fixed << std::setprecision(10)
 
 void IN_OUT() {
 #ifndef ONLINE_JUDGE
@@ -20,72 +22,37 @@ void IN_OUT() {
 #endif
 }
 
-struct PHASH {
-    size_t operator()(const pair<int, int> &x) const {
-        return hash<long long>()(((long long) x.first) ^ (((long long) x.second) << 32));
+ll parent[MAX];
+ll setSize[MAX];
+
+class DSU {
+public:
+    void make_set(ll a) {
+        parent[a] = a;
+        setSize[a] = 1;
+    }
+
+    ll find_set(ll a) {
+        if (parent[a] == a)
+            return a;
+
+        parent[a] = find_set(parent[a]);
+        return parent[a];
+    }
+
+    void merge_set(ll a, ll b) {
+        auto lt = find_set(a);
+        auto gt = find_set(b);
+        if (lt == gt)
+            return;
+
+        if (setSize[lt] > setSize[gt])
+            swap(lt, gt);
+
+        parent[lt] = gt;
+        setSize[gt] += setSize[lt];
     }
 };
-
-struct CHash {
-    static uint64_t splitmix64(uint64_t x) {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM =
-                chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
-
-double log_a_b(double a, double b) { return std::log(a) / std::log(b); }
-
-long long comb(long long n, long long k) {
-    long double res = 1;
-    for (long long i = 1; i <= k; ++i)
-        res = res * (n - k + i) / i;
-
-    return (long long) (res + 0.01);
-}
-
-vector<long long> pow_bin_arr(long long exp) {
-    vector<long long> pows(exp + 1, 1);
-    pows[0] = 1;
-
-    for (int i = 1; i <= exp; i++) {
-        pows[i] = pows[i - 1] * 2;
-    }
-
-    return pows;
-}
-
-long long big_pow_m(long long a, long long b, long long m) {
-    a %= m;
-    long long res = 1;
-    while (b > 0) {
-        if (b & 1)
-            res = res * a % m;
-        a = a * a % m;
-        b >>= 1;
-    }
-    return res;
-}
-
-long long bin_pow(long long a, long long b) {
-    long long res = 1;
-    while (b > 0) {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
-    }
-    return res;
-}
-
 
 vector<pair<ll, ll>> findBridgesTarjan(ll n, vector<vector<ll>> &adj) {
     set<pair<ll, ll>> bridges;
@@ -148,9 +115,68 @@ vector<pair<ll, ll>> findBridges(ll n, vector<vector<ll>> &adj) {
     return bridges;
 }
 
+ll solve(ll n, ll m, vector<vector<ll>> &adj) {
+    DSU dsu;
+    vector<pair<ll, ll>> comp;
+    for (int i = 0; i < n; i++)
+        if (dsu.find_set(i) == i)
+            comp.emplace_back(setSize[i], i);
+
+    if (comp.size() >= 3)
+        return 0;
+
+    vector<bool> vis(n);
+    vector<ll> sub(n);
+    function<void(ll)> dfs = [&](ll v) {
+        vis[v] = true;
+        sub[v] = 1;
+        for (auto u: adj[v]) {
+            if (vis[u])
+                continue;
+
+            dfs(u);
+            sub[v] += sub[u];
+        }
+    };
+    dfs(0);
+
+    auto bridges = findBridges(n, adj);
+//    for (auto [u, v]: bridges)
+//        cout << u << " " << v << "\n";
+    if (comp.size() == 2)
+        return comp[0].first * comp[1].first * (m - bridges.size());
+
+    ll sum = 0;
+    for (auto pair: bridges)
+        sum += sub[pair.second] * (n - sub[pair.second]) - 1;
+
+    ll nonExistEdges = n * (n - 1) / 2 - m;
+    return (m - bridges.size()) * nonExistEdges + sum;
+}
+
 int main() {
     fastio();
     IN_OUT();
 
+    ll n, m;
+    cin >> n >> m;
+
+    DSU dsu;
+    for (int i = 0; i < n; i++)
+        dsu.make_set(i);
+
+    vector<vector<ll>> adj(n);
+    for (int i = 0; i < m; i++) {
+        ll u, v;
+        cin >> u >> v;
+        --u;
+        --v;
+
+        dsu.merge_set(u, v);
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    cout << solve(n, m, adj);
     return 0;
 }
