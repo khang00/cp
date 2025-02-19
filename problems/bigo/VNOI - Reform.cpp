@@ -55,19 +55,22 @@ public:
 };
 
 vector<pair<ll, ll>> findBridgesTarjan(ll n, vector<vector<ll>> &adj) {
-    set<pair<ll, ll>> bridges;
+    vector<pair<ll, ll>> bridges;
 
-    ll curr = 1;
     vector<ll> level(n);
     vector<ll> low(n);
     function<void(ll, ll)> dfs = [&](ll u, ll p) {
-        level[u] = low[u] = ++curr;
+        if (p == -1)
+            level[u] = low[u] = 1;
+
         for (auto nxt: adj[u]) {
             if (level[nxt] == 0) {
+                level[nxt] = low[nxt] = level[u] + 1;
                 dfs(nxt, u);
+
                 low[u] = min(low[u], low[nxt]);
                 if (low[nxt] > level[u])
-                    bridges.insert({u, nxt});
+                    bridges.emplace_back(u, nxt);
             } else if (nxt != p)
                 low[u] = min(low[u], level[nxt]);
         }
@@ -77,7 +80,7 @@ vector<pair<ll, ll>> findBridgesTarjan(ll n, vector<vector<ll>> &adj) {
         if (level[i] == 0)
             dfs(i, -1);
 
-    return {bridges.begin(), bridges.end()};
+    return bridges;
 }
 
 vector<pair<ll, ll>> findBridges(ll n, vector<vector<ll>> &adj) {
