@@ -5,8 +5,8 @@
 using namespace std;
 using namespace __gnu_pbds;
 
-#define INF (ll) 1e18
-#define MAX (int) 1e6
+#define INF (ll)1e18
+#define MAX (int)1e6
 #define ll long long
 #define ul unsigned long
 #define ld long double
@@ -18,51 +18,38 @@ using namespace __gnu_pbds;
 
 void IN_OUT() {
 #ifndef ONLINE_JUDGE
-    freopen("in.txt", "r", stdin);
-    freopen("out.txt", "w", stdout);
+  freopen("in.txt", "r", stdin);
+  freopen("out.txt", "w", stdout);
 #endif
 }
 
-string solve(ll n, string s, ll k) {
-    for (int i = 0; i < pow(2, n - 1); i++) {
-        string ans, curr;
-        curr.push_back(s[0]);
+vector<ll> getDigits(ll n) {
+  vector<ll> digits;
+  while (n > 0) {
+    ll mod = n % 10;
+    n /= 10;
 
-        ll sum = 0;
-        for (int j = 0; j < n - 1; j++) {
-            if (i >> j & 1) {
-                sum += atoi(curr.c_str());
-                ans += curr + "+";
-                curr = "";
-            }
-            if (sum > k)
-                break;
-            curr.push_back(s[j + 1]);
-        }
-        ans += curr;
-        sum += atoi(curr.c_str());
-        if (sum == k)
-            return ans;
-    }
-    return "";
+    digits.push_back(mod);
+  }
+  std::reverse(digits.begin(), digits.end());
+  return digits;
+}
+
+ll solve(string n) {
+  ll mod = 10;
+  ll cnt = 0;
+
+  return cnt;
 }
 
 int main() {
-    fastio();
-    IN_OUT();
+  fastio();
+  IN_OUT();
 
-    ll t;
-    cin >> t;
+  string n;
+  cin >> n;
 
-    while (t > 0) {
-        t--;
+  cout << solve(n);
 
-        string s;
-        ll k;
-        cin >> s >> k;
-
-        cout << solve(s.size(), s, k) << "\n";
-    }
-
-    return 0;
+  return 0;
 }
