@@ -23,36 +23,44 @@ void IN_OUT() {
 #endif
 }
 
-ll solve(ll n, ll x, vector<int> &h, vector<int> &s) {
-  vector<vector<int>> dp(n + 1, vector<int>(x + 1, -1));
-  for (int j = 0; j <= x; j++)
-    dp[0][j] = 0;
+ll solve(ll n, ll m, vector<int> &x) {
+  ll MOD = 1e9 + 7;
+  vector<vector<ll> > dp(n, vector<ll>(m + 1, 0));
+  if (x[0] == 0)
+    fill(dp[0].begin(), dp[0].end(), 1);
+  else
+    dp[0][x[0]] = 1;
 
-  for (int i = 1; i <= n; i++)
-    for (int j = 0; j <= x; j++) {
-      dp[i][j] = dp[i - 1][j];
-      if (j - h[i - 1] >= 0)
-        dp[i][j] = max(dp[i][j], dp[i - 1][j - h[i - 1]] + s[i - 1]);
-    }
+  for (int i = 1; i < n; i++)
+    if (x[i] == 0) {
+      for (int j = 1; j <= m; j++)
+        for (auto k: {j - 1, j, j + 1})
+          if (1 <= k && k <= m)
+            (dp[i][j] += dp[i - 1][k]) %= MOD;
+    } else
+      for (auto k: {x[i] - 1, x[i], x[i] + 1})
+        if (1 <= k && k <= m)
+          (dp[i][x[i]] += dp[i - 1][k]) %= MOD;
 
-  return dp[n][x];
+  ll ans = 0;
+  for (int j = 1; j <= m; j++)
+    (ans += dp[n - 1][j]) %= MOD;
+
+  return ans;
 }
 
 int main() {
   fastio();
   IN_OUT();
 
-  ll n, x;
-  cin >> n >> x;
+  ll n, m;
+  cin >> n >> m;
 
-  vector<int> h(n, 0), s(n, 0);
+  vector<int> x(n, 0);
   for (auto i = 0; i < n; i++)
-    cin >> h[i];
+    cin >> x[i];
 
-  for (auto i = 0; i < n; i++)
-    cin >> s[i];
-
-  cout << solve(n, x, h, s);
+  cout << solve(n, m, x);
 
   return 0;
 }
